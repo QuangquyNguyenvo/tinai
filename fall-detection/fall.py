@@ -1,3 +1,5 @@
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import cv2
 import mediapipe as mp
 import math
@@ -18,9 +20,8 @@ def check_fall(landmarks):
     right_ankle = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE]
     mid_ankle_x = (left_ankle.x + right_ankle.x) / 2
     mid_ankle_y = (left_ankle.y + right_ankle.y) / 2
-    mid_ankle = mp_pose.PoseLandmark(mid_ankle_x, mid_ankle_y)
-    angle = duongthang(nose, mid_ankle)
-    if angle > 45:
+    angle = duongthang(nose, type('Landmark', (object,), {'x': mid_ankle_x, 'y': mid_ankle_y}) )
+    if angle < 30:
         return True
     return False
 
@@ -42,12 +43,12 @@ while cap.isOpened():
         cv2.line(frame, (int(nose.x * frame.shape[1]), int(nose.y * frame.shape[0])), 
                  (int(mid_ankle_x * frame.shape[1]), int(mid_ankle_y * frame.shape[0])), (0, 255, 0), 2)
         if check_fall(results.pose_landmarks.landmark):
-            cv2.putText(frame, "Phát hiện có thằng ngu mới té =))", (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+            cv2.putText(frame, "Fall detected!", (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
     curr_time = time.time()
     fps = 1 / (curr_time - prev_time)
     prev_time = curr_time
     cv2.putText(frame, f"FPS: {int(fps)}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    cv2.imshow("Nhận diện té ngã", frame)
+    cv2.imshow("Fall Detection", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'): break
 cap.release()
 cv2.destroyAllWindows()
