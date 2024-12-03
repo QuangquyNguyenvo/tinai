@@ -14,6 +14,11 @@ def duongthang(p1, p2):
     angle = math.atan2(dy, dx) * 180 / math.pi
     return abs(angle)
 
+def khoangcach(p1, p2):
+    dx = p2.x - p1.x
+    dy = p2.y - p1.y
+    return math.sqrt(dx * dx + dy * dy)
+
 def check_fall(landmarks):
     nose = landmarks[mp_pose.PoseLandmark.NOSE]
     left_ankle = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE]
@@ -21,7 +26,8 @@ def check_fall(landmarks):
     mid_ankle_x = (left_ankle.x + right_ankle.x) / 2
     mid_ankle_y = (left_ankle.y + right_ankle.y) / 2
     angle = duongthang(nose, type('Landmark', (object,), {'x': mid_ankle_x, 'y': mid_ankle_y}) )
-    if angle < 30:
+    dis = khoangcach(nose, type('Landmark', (object,), {'x': mid_ankle_x, 'y': mid_ankle_y}))
+    if angle < 30 or dis<0.1:
         return True
     return False
 
