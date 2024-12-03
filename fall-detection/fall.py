@@ -27,7 +27,7 @@ def check_fall(landmarks):
     mid_ankle_y = (left_ankle.y + right_ankle.y) / 2
     angle = duongthang(nose, type('Landmark', (object,), {'x': mid_ankle_x, 'y': mid_ankle_y}) )
     dis = khoangcach(nose, type('Landmark', (object,), {'x': mid_ankle_x, 'y': mid_ankle_y}))
-    if angle < 30 or dis<0.1:
+    if angle < 30 or dis<0.3:
         return True
     return False
 
